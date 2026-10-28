@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -10,5 +10,9 @@ export default defineConfig({
     port: 5173,
     // Fail instead of silently switching to another port.
     strictPort: true,
+  },
+  test: {
+    // Simulated browser DOM so React components can render in tests.
+    environment: 'jsdom',
   },
 })
