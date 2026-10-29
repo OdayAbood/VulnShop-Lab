@@ -25,3 +25,18 @@ jobs:
                 cache-dependency-path: ${{matrix.app}}/package-lock.json
             - name: Install dependencies
               run: npm ci
+
+            - name: Lint (backend)
+              if: ${{matrix.app == 'backend'}}
+              run: npx eslin "{src,test}/**/*.ts"
+             
+            - name: Lint (frontend)
+              if: ${{matrix.app == 'frontend'}}
+              run: npm run lint
+
+            - name: Build
+              # With the condition if it will run on the both runners [frontend, backend]
+              run: npm run build
+
+            - name: Test
+              run: npm test
