@@ -9,7 +9,7 @@ jobs:
         name: ${{matrix.app}}
         runs-on: ubuntu-latest
         strategy:
-            #If one of them failed the other will fail too.
+            #If one of them failed the other will not fail.
             fail-fast: false
             matrix:
                 app: [backend, frontend]
@@ -26,12 +26,7 @@ jobs:
             - name: Install dependencies
               run: npm ci
 
-            - name: Lint (backend)
-              if: ${{matrix.app == 'backend'}}
-              run: npx eslint "{src,test}/**/*.ts"
-             
-            - name: Lint (frontend)
-              if: ${{matrix.app == 'frontend'}}
+            - name: Lint
               run: npm run lint
 
             - name: Build
