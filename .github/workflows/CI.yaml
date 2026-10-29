@@ -28,7 +28,7 @@ jobs:
 
             - name: Lint (backend)
               if: ${{matrix.app == 'backend'}}
-              run: npx eslin "{src,test}/**/*.ts"
+              run: npx eslint "{src,test}/**/*.ts"
              
             - name: Lint (frontend)
               if: ${{matrix.app == 'frontend'}}
