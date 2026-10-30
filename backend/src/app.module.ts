@@ -3,6 +3,7 @@ import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import { PostgresModule } from './postgres/postgres.module';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -19,7 +20,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '../.env'
-    })
+    }),
+    PostgresModule,
   ],
   controllers: [AppController],
   providers: [AppService],
