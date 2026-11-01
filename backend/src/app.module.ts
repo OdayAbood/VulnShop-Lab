@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { PostgresModule } from './postgres/postgres.module';
+import { ProductsModule } from './products/products.module';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -22,6 +23,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       envFilePath: '../.env'
     }),
     PostgresModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
