@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { UsersService } from '../users/users.service';
@@ -17,6 +18,39 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 @Injectable()
 export class AuthService {
   constructor(private readonly usersService: UsersService) {}
+
+    private dummyHash?: Promise<string>;
+
+  private getDummyHash(): Promise<string> {
+    if (!this.dummyHash) {
+      this.dummyHash = argon2.hash('not-a-real-password');
+    }
+    return this.dummyHash;
+  }
+
+  async validateUser(email: unknown, password: unknown): Promise<PublicUser> {
+    if (
+      typeof email !== 'string' ||
+      typeof password !== 'string' ||
+      password.length > 128
+    ) {
+      throw new BadRequestException('Email and password are required');
+    }
+
+    const user = await this.usersService.findByEmail(
+      email.trim().toLowerCase(),
+    );
+
+    // Always verify a hash, even when the user does not exist, so the
+    // response time does not reveal which emails are registered.
+    const hash = user ? user.passwordHash : await this.getDummyHash();
+    const passwordMatches = await argon2.verify(hash, password);
+
+    if (!user || !passwordMatches) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    return { id: user.id, email: user.email, role: user.role };
+  }
 
   async register(email: unknown, password: unknown): Promise<PublicUser> {
     if (typeof email !== 'string' || typeof password !== 'string') {
