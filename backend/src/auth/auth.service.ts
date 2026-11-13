@@ -4,6 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import { UsersService } from '../users/users.service';
 
@@ -17,7 +18,9 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService,
+    private readonly jwtService: JwtService
+  ) {}
 
     private dummyHash?: Promise<string>;
 
@@ -50,6 +53,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
     return { id: user.id, email: user.email, role: user.role };
+  }
+
+  async login(email: unknown,password: unknown,): Promise<{ accessToken: string }> {
+    const user = await this.validateUser(email, password);
+    const accessToken = await this.jwtService.signAsync({ sub: user.id });
+    return { accessToken };
   }
 
   async register(email: unknown, password: unknown): Promise<PublicUser> {

@@ -1,6 +1,7 @@
 import { BadRequestException, ConflictException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 function createService() {
   const create = jest
@@ -11,7 +12,7 @@ function createService() {
       passwordHash,
       role: 'user',
     }));
-  const service = new AuthService({ create } as unknown as UsersService);
+  const service = new AuthService( { create } as unknown as UsersService, {} as unknown as JwtService,);
   return { service, create };
 }
 
